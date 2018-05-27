@@ -9,11 +9,11 @@ To install `clustermap` from GitHub, you need the package `devtools`.
 Once you have installed `devtools`, you can install `clustermap` using the following code. 
 ```
 library(devtools)
-install_github("hadley/dplyr")
+install_github("cbsteen/clustermap")
 ```
 
 ### Authors
-Ole Christian Lingjærde, Chloe B. Steen, Miram R. Aure, Vilde D. Haakensen
+Ole Christian Lingjærde, Chloe B. Steen, Miram R. Aure, Vilde D. Haakensen.
 
 ### License
 Artistic-2.0
