@@ -1198,6 +1198,14 @@ part.euclidean = function(X, linkage, B, minSize, maxLevel, K=6) {
 	return(group)
 }
 
+#' part.pearson
+#' @description Identifies number of clusters using method "part" with pearson as distance measure.
+#' @param X matrix
+#' @param linkage Default is "complete". Linkage for hierarchical clustering.
+#' @param B integer.
+#' @param minSize Integer Minimum size of cluster.
+#' @param maxLevel Integer. Maximum depth/level for clustering.
+#' @param K integer. Default set to 6.
 part.pearson = function(X, linkage, B, minSize, maxLevel, K=6) {
 	if (nrow(X) < 2*minSize) {
 		return(rep(1,nrow(X)))
