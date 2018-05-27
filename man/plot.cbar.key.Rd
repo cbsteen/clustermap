@@ -7,6 +7,15 @@
 \method{plot}{cbar.key}(mfrow = c(2, 5), border = F, vsize = 0.1,
   hsize = 0.2)
 }
+\arguments{
+\item{mfrow}{List of 2 integers. Default is c(2,5)}
+
+\item{border}{Boolean. Default set to FALSE.}
+
+\item{vsize}{float. Vertical size. Default set to 0.1}
+
+\item{hsize}{float. Horizontal size. Default set to 0.2}
+}
 \description{
 Adds key for color bar.
 }

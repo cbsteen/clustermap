@@ -8,6 +8,8 @@ hcluster(X, clust = "col", distance = "euclidean", linkage = "complete",
   reorder = T, ncomp = NA)
 }
 \arguments{
+\item{X}{matrix}
+
 \item{clust}{String. Perform clustering of rows or columns, can be by column: "col" (default) or by row: "row".}
 
 \item{distance}{String. Distance measure for hierarchical clustering, can be"euclidean" (default), "pearson", "spearman".}

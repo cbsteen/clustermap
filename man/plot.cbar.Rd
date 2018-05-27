@@ -24,6 +24,8 @@ pvalue.method parameter.}
 
 \item{sep.outer}{Integer. Default is 0.2.}
 
+\item{sep.inner}{Integer. Default is 0.2.}
+
 \item{border}{String. Color border. Default is NA. Can be set to desired color.}
 
 \item{lwd}{Integer. Default is 0.5. Thickness of border.}

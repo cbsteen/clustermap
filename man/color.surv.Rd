@@ -14,6 +14,8 @@ color.surv(x, label, color, na.color, clust)
 \item{color}{String. Color string separated by "-".}
 
 \item{na.color}{String. Set colors to missing data. Default is "grey".}
+
+\item{clust}{String. Direction for clustering.}
 }
 \description{
 Sets colors for survival variables. Called by set.color().

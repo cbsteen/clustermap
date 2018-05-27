@@ -6,7 +6,11 @@
 \usage{
 col2num(X, clust = "col")
 }
+\arguments{
+\item{X}{matrix}
+
+\item{clust}{String. Direction for clustering, default is "col" (column-wise)}
+}
 \description{
 Function to transform raster to numerical matrix.
 }
-\keyword{matrix}

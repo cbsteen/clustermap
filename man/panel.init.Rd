@@ -7,7 +7,7 @@
 panel.init(mfrow = c(2, 2))
 }
 \arguments{
-\item{Integer}{Number of rows and columns for panel. Default "mfrow=c(2,2)".}
+\item{mfrow}{List of 2 integers. Number of rows and columns for panel. Default "mfrow=c(2,2)".}
 }
 \description{
 Initiates panel for plotting heatmaps.

@@ -18,8 +18,6 @@ part.euclidean(X, linkage, B, minSize, maxLevel, K = 6)
 \item{maxLevel}{Integer. Maximum depth/level for clustering.}
 
 \item{K}{integer. Default set to 6.}
-
-\item{clust}{String. Direction of clustering.}
 }
 \description{
 Identifies number of clusters using method "part" with Euclidean distance.

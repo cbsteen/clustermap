@@ -8,6 +8,8 @@
   col.na = "grey", as.image = T, interpolate = F, origin = 0)
 }
 \arguments{
+\item{X}{matrix}
+
 \item{colorscale}{String. Three (valid R) colors separated by hyphens used to represent the values as colors
 in the heatmap. Default is "blue-white-red".}
 

@@ -7,6 +7,8 @@
 set.color(x, type = "discrete", label, color, na.color, clust)
 }
 \arguments{
+\item{x}{matrix}
+
 \item{type}{String. Default is "discrete".}
 
 \item{label}{String. Default is "".}

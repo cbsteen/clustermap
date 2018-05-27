@@ -9,7 +9,7 @@
 \arguments{
 \item{clust}{String. Sets direction of clustering, default is "col" (column-wise)}
 
-\item{order}{String. Default is set to "tree"}
+\item{...}{list}
 }
 \description{
 Plot Silhouettes for cluster diagnostics.
