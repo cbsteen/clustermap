@@ -1,2 +1,2 @@
 # clustermap
-clustermap: a versatile toolbox in R for cluster-ing and heatmap visualization
+clustermap: a versatile toolbox in R for clustering and heatmap visualization
