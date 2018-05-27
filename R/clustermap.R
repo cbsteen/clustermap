@@ -1199,9 +1199,9 @@ part.euclidean = function(X, linkage, B, minSize, maxLevel, K=6) {
 }
 
 #' part.pearson
-#' @description Identifies number of clusters using method "part" with pearson as distance measure.
+#' @description Identifies number of clusters using method "part" with pearson correlation as distance measure.
 #' @param X matrix
-#' @param linkage Default is "complete". Linkage for hierarchical clustering.
+#' @param linkage Linkage for clustering.
 #' @param B integer.
 #' @param minSize Integer Minimum size of cluster.
 #' @param maxLevel Integer. Maximum depth/level for clustering.
@@ -1242,6 +1242,14 @@ part.pearson = function(X, linkage, B, minSize, maxLevel, K=6) {
 	return(group)
 }
 
+#' part.spearman
+#' @description Identifies number of clusters using method "part" with spearman correlation as distance measure.
+#' @param X matrix
+#' @param linkage Linkage for clustering.
+#' @param B integer.
+#' @param minSize Integer Minimum size of cluster.
+#' @param maxLevel Integer. Maximum depth/level for clustering.
+#' @param K integer. Default set to 6.
 part.spearman = function(X, linkage, B, minSize, maxLevel, K=6) {
 	if (nrow(X) < 2*minSize) {
 		return(rep(1,nrow(X)))
@@ -1278,6 +1286,12 @@ part.spearman = function(X, linkage, B, minSize, maxLevel, K=6) {
 	return(group)
 }
 
+#' gap.euclidean
+#' @description Identifies number of clusters using method "part" with Eucledian distance as distance measure.
+#' @param X matrix
+#' @param linkage Linkage for clustering.
+#' @param B integer.
+#' @param K integer. Default set to 6.
 gap.euclidean = function(X, linkage, B, K=6) {
 	N = nrow(X)
 	# Xobs = scale(X, scale=F)  ## REMOVED
@@ -1329,6 +1343,12 @@ gap.euclidean = function(X, linkage, B, K=6) {
 	list(k=k.opt, gap=res, sk=sk, group=Pobs[,k.opt])
 }
 
+#' gap.pearson
+#' @description Identifies number of clusters using method "part" with Pearson correlation as distance measure.
+#' @param X matrix
+#' @param linkage Linkage for clustering.
+#' @param B integer.
+#' @param K integer. Default set to 6.
 gap.pearson = function(X, linkage, B, K=6)  {
 	N = nrow(X)
 	# Xobs = scale(X, scale=F)
@@ -1379,6 +1399,12 @@ gap.pearson = function(X, linkage, B, K=6)  {
 	list(k=k.opt, gap=res, sk=sk, group=Pobs[,k.opt])
 }
 
+#' gap.spearman
+#' @description Identifies number of clusters using method "part" with Spearman correlation as distance measure.
+#' @param X matrix
+#' @param linkage Linkage for clustering.
+#' @param B integer.
+#' @param K integer. Default set to 6.
 gap.spearman = function(X, linkage, B, K=6)  {
 	N = nrow(X)
 	# Xobs = scale(X, scale=F)
@@ -1429,6 +1455,11 @@ gap.spearman = function(X, linkage, B, K=6)  {
 	list(k=k.opt, gap=res, sk=sk, group=Pobs[,k.opt])
 }
 
+#' plot.gap
+#' @description Plots gap statistic
+#' @param clust String. Sets direction of clustering, default is "col" (column-wise)
+#' @param B Integer.
+#' @param K Integer
 plot.gap = function(clust="col", B=100, K=6) {
 	if (clust=="col") {
 		res = gap.curve(.CLUSTERMAP$col.X, clust, .CLUSTERMAP$col.distance, .CLUSTERMAP$col.linkage, B, K)
@@ -1441,6 +1472,10 @@ plot.gap = function(clust="col", B=100, K=6) {
 	points(res$k, res$gap[res$k], pch=19, col="red")
 }
 
+#' plot.silhouette
+#' @description Get silhouettes
+#' @param clust String. Sets direction of clustering, default is "col" (column-wise)
+#' @param order String. Default is set to "tree"
 get.silhouette = function(clust="col", order="tree") {
 	if (clust=="col") {
 	    if (order=="tree") {
@@ -1476,6 +1511,10 @@ get.silhouette = function(clust="col", order="tree") {
 	return(tab)
 }
 
+#' plot.mean.silhouette
+#' @description Plot mean silhouettes
+#' @param clust String. Sets direction of clustering, default is "col" (column-wise)
+#' @param K Integer, Default is set to 10.
 plot.mean.silhouette = function (clust="col", K=10) {
   nclust = 2:K
   S0 = rep(NA, length(nclust))
@@ -1489,6 +1528,10 @@ plot.mean.silhouette = function (clust="col", K=10) {
   points(nclust[k.opt], S0[k.opt], pch=19, col="red")
 }
 
+#' plot.silhouette
+#' @description Plot Silhouettes for cluster diagnostics.
+#' @param clust String. Sets direction of clustering, default is "col" (column-wise)
+#' @param order String. Default is set to "tree"
 plot.silhouette = function (clust="col", ...) {
 	silh = get.silhouette(clust=clust, order="tree")
 	nclust = length(unique(silh$cluster))
