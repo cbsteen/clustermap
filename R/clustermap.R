@@ -8,6 +8,7 @@
 #' @author Ole Christian Lingjærde & Chloé B. Steen
 devtools::use_package("graphics")
 devtools::use_package("gclus")
+devtools::use_package("survival")
 
 #' blocks
 #' @description This function creates a small example gene expression data set with 110 genes as
@@ -64,7 +65,8 @@ bellagio = function() {
 
 #' col2num
 #' @description Function to transform raster to numerical matrix.
-#' @keywords matrix
+#' @param X matrix
+#' @param clust String. Direction for clustering, default is "col" (column-wise)
 col2num = function(X, clust="col") {
   if (clust=="col") {
   	# From Nxp to (3N)xp
@@ -130,6 +132,7 @@ pca.approx = function(X, ncomp) {
 #' @description Performs hierarchical clustering of a data matrix X. To cluster both rows and columns,
 #' call it twice with clust="col"and clust="row" respectively. The option reorder=TRUE leads to a nice
 #' arrangement of the clusters from left to right to ensure neighbors are similar to each other.
+#' @param X matrix
 #' @param clust String. Perform clustering of rows or columns, can be by column: "col" (default) or by row: "row".
 #' @param distance String. Distance measure for hierarchical clustering, can be"euclidean" (default), "pearson", "spearman".
 #' @param linkage String. Method for clusterting, can be "complete" (default), "average", "single", "ward".
@@ -296,7 +299,7 @@ plot.init = function(tree=c(), text=c(), cbar=c(), ckey=T, inner=c(), outer=c())
 
 #' panel.init
 #' @description Initiates panel for plotting heatmaps.
-#' @param Integer Number of rows and columns for panel. Default "mfrow=c(2,2)".
+#' @param mfrow List of 2 integers. Number of rows and columns for panel. Default "mfrow=c(2,2)".
 panel.init = function(mfrow=c(2,2)) {
 	A = matrix(c(2,3,3,1,1,1),2,3,byrow=TRUE)
 	B = matrix(NA, 2*mfrow[1], 3*mfrow[2])
@@ -330,6 +333,7 @@ set.colclust = function(clust) {
 
 #' set.color
 #' @description Converts numerical information into colors
+#' @param x matrix
 #' @param type String. Default is "discrete".
 #' @param label String. Default is "".
 #' @param color String. Default is "".
@@ -414,8 +418,8 @@ color.cont = function(x, label, color, na.color) {
 #' @param label String
 #' @param color String. Color string separated by "-".
 #' @param na.color String. Set colors to missing data. Default is "grey".
+#' @param clust String. Direction for clustering.
 color.surv = function(x, label, color, na.color, clust) {
-	require("survival")
     clu = get.subclust(clust=clust, order="orig")
     uclu = unique(clu)
     for (ii in 1:length(uclu)) {
@@ -508,6 +512,10 @@ plot.hmap.key = function() {
 
 #' plot.cbar.key
 #' @description Adds key for color bar.
+#' @param mfrow List of 2 integers. Default is c(2,5)
+#' @param border Boolean. Default set to FALSE.
+#' @param vsize float. Vertical size. Default set to 0.1
+#' @param hsize float. Horizontal size. Default set to 0.2
 plot.cbar.key = function(mfrow=c(2,5), border=F, vsize=0.1, hsize=0.2) {
 	frame()
 	keys = .CLUSTERMAP$cbar.key
@@ -607,6 +615,7 @@ plot.text = function(txt, side=4, sep.outer=0, cex=0.5, maxchar=NA) {
 #' @param pvalue.method String. Default is "chisq". Tests association of information added to identifed clusters using this method.
 #' @param cex Integer. Text size. Default set to 0.8
 #' @param sep.outer Integer. Default is 0.2.
+#' @param sep.inner Integer. Default is 0.2.
 #' @param border String. Color border. Default is NA. Can be set to desired color.
 #' @param lwd Integer. Default is 0.5. Thickness of border.
 plot.cbar = function (..., side=3, labels=T, pvalue=F, pvalue.method="chisq",
@@ -812,6 +821,7 @@ compute.hmap = function (X, colorscale, xmax, col.na) {
 
 #' plot.hmap
 #' @description plots heatmaps of a numerical data matrix X.
+#' @param X matrix
 #' @param colorscale String. Three (valid R) colors separated by hyphens used to represent the values as colors
 #' in the heatmap. Default is "blue-white-red".
 #' @param xmax Integer Default is set to maximum value of input matrix X.
@@ -1156,7 +1166,6 @@ part.new = function(X, clust="col", distance="euclidean", linkage="complete", B=
 #' part.euclidean
 #' @description Identifies number of clusters using method "part" with Euclidean distance.
 #' @param X matrix
-#' @param clust String. Direction of clustering.
 #' @param linkage Default is "complete". Linkage for hierarchical clustering.
 #' @param B integer.
 #' @param minSize Integer Minimum size of cluster.
@@ -1531,7 +1540,7 @@ plot.mean.silhouette = function (clust="col", K=10) {
 #' plot.silhouette
 #' @description Plot Silhouettes for cluster diagnostics.
 #' @param clust String. Sets direction of clustering, default is "col" (column-wise)
-#' @param order String. Default is set to "tree"
+#' @param ... list
 plot.silhouette = function (clust="col", ...) {
 	silh = get.silhouette(clust=clust, order="tree")
 	nclust = length(unique(silh$cluster))
