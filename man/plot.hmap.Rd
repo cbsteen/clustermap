@@ -5,7 +5,7 @@
 \title{plot.hmap}
 \usage{
 \method{plot}{hmap}(X, colorscale = "blue-white-red", xmax = NA,
-  col.na = "grey", as.image = T, interpolate = F, origin = 0)
+  col.na = "grey", as.image = T, interpolate = F)
 }
 \arguments{
 \item{X}{matrix}

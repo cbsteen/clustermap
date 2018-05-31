@@ -5,7 +5,7 @@
 \title{plot.init()}
 \usage{
 \method{plot}{init}(tree = c(), text = c(), cbar = c(), ckey = T,
-  inner = c(), outer = c())
+  legend = F, inner = c(), outer = c())
 }
 \arguments{
 \item{tree}{Integer. Adds a dendogram to the plot on the sides specified by the argument. Default is c(2,3),

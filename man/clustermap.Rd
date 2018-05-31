@@ -6,8 +6,7 @@
 \alias{clustermap-package}
 \title{clustermap}
 \description{
-clustermap is a package for hierarchical clustering and heatmap visualisation of numerical
-data matrices.
+Clustermap is an R package for heatmap and hierarchical clustering visualization
 }
 \author{
 Ole Christian Lingjærde & Chloé B. Steen
