@@ -29,5 +29,5 @@
 \item{vsize}{float. Height of the key. Default set to 0.1}
 }
 \description{
-If legend set to TRUE in plot.hmap(), plots color bar legend on the same page as heatmap.
+If legend set to TRUE in plot.init(), plots color bar legend on the same page as heatmap.
 }

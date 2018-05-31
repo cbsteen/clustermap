@@ -17,9 +17,11 @@
 
 \item{hsep}{float. Horizontal separator of the colorbar keys, default set to 0.05.}
 
-\item{vlsep}{float. Vertical distance between lower part of the heatmap, and the bottom of the color bar}
+\item{vlsep}{float. Vertical distance between lower part of the heatmap, and the bottom of the color bar.
+Default is set to 0.1}
 
-\item{vusep}{float. Vertical distance between upper part of the heatmap, and the bottom of the color bar.}
+\item{vusep}{float. Vertical distance between upper part of the heatmap, and the bottom of the color bar.
+Default is set to 0.1}
 
 \item{vsize.title}{float. Space for adding color bar title. Default is 0.08}
 

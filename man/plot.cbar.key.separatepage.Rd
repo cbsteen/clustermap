@@ -29,5 +29,5 @@
 \item{vsize.title}{float. Space for adding color bar title. Default is 0.08}
 }
 \description{
-If legend set to FALSE in plot.hmap(), plots color bar legend on a separate page than the heatmap.
+If legend set to FALSE in plot.init(), plots color bar legend on a separate page than the heatmap.
 }

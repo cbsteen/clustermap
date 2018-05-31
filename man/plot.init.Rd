@@ -11,11 +11,14 @@
 \item{tree}{Integer. Adds a dendogram to the plot on the sides specified by the argument. Default is c(2,3),
 which adds a dendogram on the left and top sides of the plot.}
 
-\item{text}{Integer. Adds text.}
+\item{text}{Integer. Adds text on specified sides.}
 
-\item{cbar}{Integer. Adds a color bar.}
+\item{cbar}{Integer. Adds color bar(s) on specified sides.}
 
-\item{ckey}{Boolean. Default is TRUE.}
+\item{ckey}{Boolean. Adds color bar key(s) (legends). Default is TRUE.}
+
+\item{legend}{Boolean. Default is FALSE. If set to TRUE, color bar keys are plotted on same plot as heatmap.
+Otherwise, it is plotted on a separate page.}
 
 \item{inner}{Integer vector of 4 elements. Adds (or subtracts) a specific amount of space in the inner margins
 on a specified side of the heatmap.}
