@@ -15,6 +15,7 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
+
 Clustermap is a collection of R functions for hierarchical clustering, determination of the number of clusters, and heatmap visualisation. The package produces high-quality annotated heatmaps, makes the user determine the visual design, and has a user-friendly interface. Even users with little R experience will be able to produce pretty figures at a fast pace, while more experienced users will appreciate the modular design that allows the package to be extended with new functionality. 
 
 Clustermap is designed with the philosophy that technical parameters and quantities calculated from the data should be hidden from sight whenever possible, while still being available to the advanced user. All technical parameters have default values that works well for most applications, but they can be changed easily when desired. Full access to such parameters and the modular design allows advanced users to integrate their own code with Clustermap. 
@@ -196,7 +197,7 @@ Some examples: "green-black-red", "yellow-black-blue", "black-white-black" (to i
 ###Set up everything
 The following code sets up a simple example data set that can be used to run the examples below. It creates a hypothetical gene expression matrix consisting of 110 genes as rows, and 40 patient samples as columns. The `y1` vector contains information about cancer subtype of each sample. The `y2` vector contains information about stage, and finally the `y3` vector about immune score. 
 
-```{r}
+```
 library(clustermap) # Make package functions available
 tmp = blocks() # Contains the 110x40-matrix X and 40-vectors y1,y2,y3
 X = tmp$X
@@ -208,7 +209,7 @@ y3 = tmp$y3
 ###How to create a heatmap
 The following code creates a simple heatmap with no clustering, using the default color-scale ("blue-white-red") and adds the key for the color scale. 
 
-```{r, echo=FALSE}
+```
 plot.init()
 plot.hmap(X)
 plot.hmap.key()

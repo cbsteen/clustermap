@@ -1,5 +1,3 @@
-# ALL PARAMETERS MUST BE DOCUMENTED (ref http://r-pkgs.had.co.nz/man.html)
-
 #' clustermap
 #' @description Clustermap is an R package for heatmap and hierarchical clustering visualization
 #' @docType package
@@ -13,6 +11,7 @@ devtools::use_package("gclus")
 #' @description This function creates a small example gene expression data set with 110 genes as
 #'   rows and 40 samples as columns.
 #' @keywords example
+#' @export
 #' @examples
 #' \dontrun{
 #' tmp = blocks() # Contains the 110x40-matrix X and 40-vectors y1,y2,y3
@@ -49,6 +48,7 @@ blocks = function() {
 #' bellagio
 #' @description Function to make a larger example data set. This dataset represents a picture
 #' @keywords example
+#' @export
 bellagio = function() {
   # Read and downsample image of Lago Como
   pict = image_read("Bellagio.jpg")
@@ -66,6 +66,7 @@ bellagio = function() {
 #' @description Function to transform raster to numerical matrix.
 #' @param X matrix
 #' @param clust String. Direction for clustering, default is "col" (column-wise)
+#' @export
 col2num = function(X, clust="col") {
   if (clust=="col") {
     # From Nxp to (3N)xp
@@ -87,6 +88,7 @@ col2num = function(X, clust="col") {
 #' @description Function to transform numerical matrix to raster.
 #' @param Z matrix
 #' @param clust String. Default is "col". Specifies column-wise ("col") or row-rise clustering ("row").
+#' @export
 num2col = function(Z, clust="col") {
   if (clust=="col") {
     # From (3N)xp to Nxp
@@ -112,6 +114,7 @@ num2col = function(Z, clust="col") {
 #' @description Approximates PCA.
 #' @param X matrix
 #' @param ncomp number of principal components to use.
+#' @export
 pca.approx = function(X, ncomp) {
   if (ncomp > min(ncol(X),nrow(X))) {
     ncomp = min(ncol(X),nrow(X))
@@ -137,6 +140,7 @@ pca.approx = function(X, ncomp) {
 #' @param linkage String. Method for clusterting, can be "complete" (default), "average", "single", "ward".
 #' @param reorder Boolean. When TRUE, arranges the clustered items in optimized order.
 #' @param ncomp Integer. Default NA. If set to integer k, only the first k principal components are used in clustering
+#' @export
 hcluster = function(X, clust="col", distance="euclidean", linkage="complete", reorder=T, ncomp=NA) {
   if (!is.na(ncomp)) {
     if (distance %in% c("euclidean","pearson","spearman")) {
@@ -195,6 +199,7 @@ hcluster = function(X, clust="col", distance="euclidean", linkage="complete", re
 #' @param B Integer. Number of permutations. Used if method set to 'PART'.
 #' @param min.size Integer. Least number of element in a single cluster. Used if method set to 'PART'.
 #' @param max.level Integer. The level in the dendogram counting from the root to stop searching for clusters.
+#' @export
 subclust = function(k=NA, clust="col", method="gap", B=50, min.size=5, max.level=3) {
   tmp = .CLUSTERMAP
   if (clust=="col" && !is.na(k)) {
@@ -221,6 +226,7 @@ subclust = function(k=NA, clust="col", method="gap", B=50, min.size=5, max.level
 #' returns a data frame with two columns, the first being the cluster labels and the second being the
 #' supplied row/column labels.
 #' @param order String. Get subclusters in same order as dendogram.
+#' @export
 get.subclust = function(clust="col", labels=c(), order="tree") {
   if (clust=="col") {
     group = .CLUSTERMAP$colgroup
@@ -246,6 +252,7 @@ get.subclust = function(clust="col", labels=c(), order="tree") {
 #' get.order
 #' @description Retrieves order of samples after clustering.
 #' @param clust String. Default is "col". Specifies column-wise ("col") or row-rise clustering ("row").
+#' @export
 get.order = function(clust="col") {
   if (clust=="col") {
     return(.CLUSTERMAP$colclust$order)
@@ -271,6 +278,7 @@ get.order = function(clust="col") {
 #' on a specified side of the heatmap.
 #' @param outer Integer vector of 4 elements. Adds (or subtracts) a specific amount of space in the outer margins
 #' on a specified side of the heatmap.
+#' @export
 #' @examples
 #' \dontrun{
 #' plot.init() # Make no room for additional elements
@@ -300,6 +308,7 @@ plot.init = function(tree=c(), text=c(), cbar=c(), ckey=T, legend=F, inner=c(), 
 #' panel.init
 #' @description Initiates panel for plotting heatmaps.
 #' @param mfrow List of 2 integers. Number of rows and columns for panel. Default "mfrow=c(2,2)".
+#' @export
 panel.init = function(mfrow=c(2,2)) {
   A = matrix(c(2,3,3,1,1,1),2,3,byrow=TRUE)
   B = matrix(NA, 2*mfrow[1], 3*mfrow[2])
@@ -339,6 +348,7 @@ set.colclust = function(clust) {
 #' @param color String. Default is "".
 #' @param na.color String. Set colors to missing data. Default is "grey".
 #' @param clust String. Default is "col". Specifies column-wise ("col") or row-rise clustering ("row").
+#' @export
 set.color = function(x, type="discrete", label, color, na.color, clust) {
   if (type=="continuous") {
     if (missing(label)) label = ""
@@ -366,6 +376,7 @@ set.color = function(x, type="discrete", label, color, na.color, clust) {
 #' @param label String
 #' @param color String. Color string separated by "-".
 #' @param na.color String. Set colors to missing data. Default is "grey".
+#' @export
 color.cont = function(x, label, color, na.color) {
   M = max(abs(x),na.rm=T)
   z = rbind(as.numeric(x)/M)
@@ -412,58 +423,58 @@ color.cont = function(x, label, color, na.color) {
 #	}
 #}
 
-#' #' color.surv
-#' #' @description Sets colors for survival variables. Called by set.color().
-#' #' @param x numeric matrix
-#' #' @param label String
-#' #' @param color String. Color string separated by "-".
-#' #' @param na.color String. Set colors to missing data. Default is "grey".
-#' #' @param clust String. Direction for clustering.
-#' color.surv = function(x, label, color, na.color, clust) {
-#'     clu = get.subclust(clust=clust, order="orig")
-#'     uclu = unique(clu)
-#'     for (ii in 1:length(uclu)) {
-#'     	time.ii = x[clu==uclu[ii],1]
-#'     	cens.ii = x[clu==uclu[ii],2]
-#'     	res = survfit(Surv(time.ii,cens.ii) ~ 1)
-#'     	pred.ii = interpo(time.ii, res)
-#'     }
-#'
-#' 	M = max(abs(x),na.rm=T)
-#'     z = rbind(as.numeric(x)/M)
-#'     z.mis = is.na(z)
-#'     z[z.mis] = mean(z[!z.mis])
-#'     x.grid = seq(min(x,na.rm=T), max(x,na.rm=T), length=100)
-#'     z.grid = rbind(as.numeric(x.grid)/M)
-#'     c0 = col2rgb(unlist(strsplit(color,"-")))/255
-#'     if (ncol(c0)==1) {
-#'     	c0 = cbind(c(1,1,1), c0)
-#'     }
-#'    	if (ncol(c0)==2) {
-#'     	z2 = (z-min(z))/(max(z)-min(z))
-#'     	c1 = cbind(c0[,1]) %*% (1-z2) + cbind(c0[,2]) %*% z2
-#'     	c2 = rgb(c1[1,], c1[2,], c1[3,])
-#'     	z2.grid = as.numeric((z.grid-min(z.grid))/(max(z.grid)-min(z.grid)))
-#'     	c1.grid = cbind(c0[,1]) %*% (1-z2.grid) + cbind(c0[,2]) %*% z2.grid
-#'     	c2.grid = rgb(c1.grid[1,], c1.grid[2,], c1.grid[3,])
-#'     } else if (ncol(c0)==3) {
-#'     	c1 = matrix(c0[,2], 3, length(z), byrow=F) +
-#'     	cbind(c0[,1]-c0[,2]) %*% ifelse(z<0,-z,0) +
-#'     	cbind(c0[,3]-c0[,2]) %*% ifelse(z>0,z,0)
-#'     	c2 = rgb(c1[1,], c1[2,], c1[3,])
-#'     	z2.grid = as.numeric((z.grid-min(z.grid))/(max(z.grid)-min(z.grid)))
-#'     	c1.grid = matrix(c0[,2], 3, length(z.grid), byrow=F) +
-#'     	cbind(c0[,1]-c0[,2]) %*% ifelse(z.grid<0,-z.grid,0) +
-#'     	cbind(c0[,3]-c0[,2]) %*% ifelse(z.grid>0,z.grid,0)
-#'     	c2.grid = rgb(c1.grid[1,], c1.grid[2,], c1.grid[3,])
-#'     }
-#'     c2[z.mis] = "grey"
-#'     key.x = x.grid #x[!z.mis]
-#'     key.z = z2.grid #z2[!z.mis]
-#'     key.c = c2.grid #c2[!z.mis]
-#'     list(label=label, type="cont", x=x, color=c2, na.color=na.color,
-#'     	key=data.frame(x=key.x, z=key.z, color=key.c))
-#' }
+## #' color.surv
+## #' @description Sets colors for survival variables. Called by set.color().
+## #' @param x numeric matrix
+## #' @param label String
+## #' @param color String. Color string separated by "-".
+## #' @param na.color String. Set colors to missing data. Default is "grey".
+## #' @param clust String. Direction for clustering.
+## color.surv = function(x, label, color, na.color, clust) {
+##     clu = get.subclust(clust=clust, order="orig")
+##     uclu = unique(clu)
+##     for (ii in 1:length(uclu)) {
+##     	time.ii = x[clu==uclu[ii],1]
+##     	cens.ii = x[clu==uclu[ii],2]
+##     	res = survfit(Surv(time.ii,cens.ii) ~ 1)
+##     	pred.ii = interpo(time.ii, res)
+##     }
+##
+## 	M = max(abs(x),na.rm=T)
+##     z = rbind(as.numeric(x)/M)
+##     z.mis = is.na(z)
+##     z[z.mis] = mean(z[!z.mis])
+##     x.grid = seq(min(x,na.rm=T), max(x,na.rm=T), length=100)
+##     z.grid = rbind(as.numeric(x.grid)/M)
+##     c0 = col2rgb(unlist(strsplit(color,"-")))/255
+##     if (ncol(c0)==1) {
+##     	c0 = cbind(c(1,1,1), c0)
+##     }
+##    	if (ncol(c0)==2) {
+##     	z2 = (z-min(z))/(max(z)-min(z))
+##     	c1 = cbind(c0[,1]) %*% (1-z2) + cbind(c0[,2]) %*% z2
+##     	c2 = rgb(c1[1,], c1[2,], c1[3,])
+##     	z2.grid = as.numeric((z.grid-min(z.grid))/(max(z.grid)-min(z.grid)))
+##     	c1.grid = cbind(c0[,1]) %*% (1-z2.grid) + cbind(c0[,2]) %*% z2.grid
+##     	c2.grid = rgb(c1.grid[1,], c1.grid[2,], c1.grid[3,])
+##     } else if (ncol(c0)==3) {
+##     	c1 = matrix(c0[,2], 3, length(z), byrow=F) +
+##     	cbind(c0[,1]-c0[,2]) %*% ifelse(z<0,-z,0) +
+##     	cbind(c0[,3]-c0[,2]) %*% ifelse(z>0,z,0)
+##     	c2 = rgb(c1[1,], c1[2,], c1[3,])
+##     	z2.grid = as.numeric((z.grid-min(z.grid))/(max(z.grid)-min(z.grid)))
+##     	c1.grid = matrix(c0[,2], 3, length(z.grid), byrow=F) +
+##     	cbind(c0[,1]-c0[,2]) %*% ifelse(z.grid<0,-z.grid,0) +
+##     	cbind(c0[,3]-c0[,2]) %*% ifelse(z.grid>0,z.grid,0)
+##     	c2.grid = rgb(c1.grid[1,], c1.grid[2,], c1.grid[3,])
+##     }
+##     c2[z.mis] = "grey"
+##     key.x = x.grid #x[!z.mis]
+##     key.z = z2.grid #z2[!z.mis]
+##     key.c = c2.grid #c2[!z.mis]
+##     list(label=label, type="cont", x=x, color=c2, na.color=na.color,
+##     	key=data.frame(x=key.x, z=key.z, color=key.c))
+## }
 
 #' color.disc
 #' @description Sets colors for discrete variables. Called by set.color().
@@ -471,6 +482,7 @@ color.cont = function(x, label, color, na.color) {
 #' @param label String
 #' @param color String. Color string separated by "-".
 #' @param na.color String. Set colors to missing data. Default is "grey".
+#' @export
 color.disc = function(x, label, color, na.color) {
   val = sort(unique(x))
   z = rep(NA, length(x))
@@ -486,6 +498,7 @@ color.disc = function(x, label, color, na.color) {
 #' plot.hmap.key
 #' @description The function plot.hmap.key() creates a color key, i.e. a graphical overview
 #' of what numerical values the different colors found in the heatmap correspond to.
+#' @export
 plot.hmap.key = function() {
   colrange = COLOR_SCALE
   xmin = -max(abs(colrange$valuerange))
@@ -525,6 +538,7 @@ plot.hmap.key = function() {
 #' @param font.title integer. Font type for title, default is set to 2 (bold)
 #' @param cex float. Text size for legend. Default is set to 0.8.
 #' @param mfrow integer vector of length 2, default set to NA.
+#' @export
 plot.cbar.key = function(border=F, vsize=0.1, hsize=0.05, hsep=0.05, vlsep=0.1, vusep=0.1,
                          vsize.title=0.08, cex.title=1, font.title=2, cex=0.8, mfrow=NA) {
   if (.CLUSTERMAP$legend) {
@@ -548,6 +562,7 @@ plot.cbar.key = function(border=F, vsize=0.1, hsize=0.05, hsep=0.05, vlsep=0.1, 
 #' @param cex.title integer. Size of title font. Default is 1.
 #' @param font.title integer. Font type for title, default is set to 2 (bold)
 #' @param cex float. Text size for legend. Default is set to 0.8.
+#' @export
 plot.cbar.key.samepage = function(border, hsize, hsep, vlsep, vusep,
                                   vsize.title, cex.title, font.title, cex) {
   legend = .CLUSTERMAP$legend
@@ -622,6 +637,7 @@ plot.cbar.key.samepage = function(border, hsize, hsep, vlsep, vusep,
 #' @param cex.title integer. Size of title font. Default is 1.
 #' @param font.title integer. Font type for title, default is set to 2 (bold)
 #' @param cex float. Text size for legend. Default is set to 0.8.
+#' @export
 plot.cbar.key.separatepage = function(border, vsize, hsize, hsep, mfrow,
                                       cex.title, font.title, cex) {
   keys = .CLUSTERMAP$cbar.key
@@ -677,6 +693,7 @@ plot.cbar.key.separatepage = function(border, vsize, hsize, hsep, mfrow,
 #' @param sep.outer Integer. Default is 0.
 #' @param cex Integer. Set text size.
 #' @param maxchar Integer. Default is NA. Truncates the text labels to a maximum number of characters.
+#' @export
 plot.text = function(txt, side=4, sep.outer=0, cex=0.5, maxchar=NA) {
   if (side==1 || side==3) {
     if (length(.CLUSTERMAP$colclust)>0) {
@@ -728,6 +745,7 @@ plot.text = function(txt, side=4, sep.outer=0, cex=0.5, maxchar=NA) {
 #' @param sep.inner Integer. Default is 0.2.
 #' @param border String. Color border. Default is NA. Can be set to desired color.
 #' @param lwd Integer. Default is 0.5. Thickness of border.
+#' @export
 plot.cbar = function (..., side=3, labels=T, pvalue=F, pvalue.method="chisq",
                       cex=0.8, sep.outer=0.02, sep.inner=0.2, border=NA, lwd=0.5) {
   datatype = sapply(list(...), function(x) x$type)
@@ -894,6 +912,7 @@ plot.cbar = function (..., side=3, labels=T, pvalue=F, pvalue.method="chisq",
 #' @param colorscale String. Color string separated by "-".
 #' @param xmax Integer Default is set to maximum value in input matrix X
 #' @param col.na String. Specifies color of missing data. Default set to "grey".
+#' @export
 compute.hmap = function (X, colorscale, xmax, col.na) {
   if (length(.CLUSTERMAP$colclust)>0) {
     X = X[,.CLUSTERMAP$colclust$order]
@@ -938,6 +957,7 @@ compute.hmap = function (X, colorscale, xmax, col.na) {
 #' @param as.image Boolean. Default is set to T
 #' @param interpolate Boolean. Default is set to F.
 #' @param origin Integer. Default is set to 0.
+#' @export
 plot.hmap = function(X, colorscale="blue-white-red", xmax=NA, col.na="grey", as.image=T, interpolate=F) {
   m = .CLUSTERMAP$margin
   plot(0, 0, type="n", xaxt="n", yaxt="n", xlab="", ylab="",
@@ -974,6 +994,7 @@ plot.hmap = function(X, colorscale="blue-white-red", xmax=NA, col.na="grey", as.
 #' @param lwd Float. Line width of tree branches.
 #' @param trim Boolean. Default set to TRUE.
 #' @param colors String. Default set to NA. Colors the clusters.
+#' @export
 plot.tree = function (groups, side=3, sep=0.03, lwd=0.5, trim=T, colors=NA) {
   if (side==1 || side==3) {
     clust = .CLUSTERMAP$colclust
@@ -1017,6 +1038,7 @@ plot.tree = function (groups, side=3, sep=0.03, lwd=0.5, trim=T, colors=NA) {
 #' @param delta2 argument
 #' @param sep argument
 #' @param lwd Float. Line width.
+#' @export
 plot.fork.left = function (i, clust, trim, groups, delta, delta2, sep, lwd) {
   N = length(clust$height)
   mrg = clust$merge
@@ -1068,6 +1090,7 @@ plot.fork.left = function (i, clust, trim, groups, delta, delta2, sep, lwd) {
 #' @param delta2 argument
 #' @param sep argument
 #' @param lwd Float. Line width.
+#' @export
 plot.fork.right = function (i, clust, trim, groups, delta, delta2, sep, lwd) {
   N = length(clust$height)
   mrg = clust$merge
@@ -1119,6 +1142,7 @@ plot.fork.right = function (i, clust, trim, groups, delta, delta2, sep, lwd) {
 #' @param delta2 argument
 #' @param sep argument
 #' @param lwd Float. Line width.
+#' @export
 plot.fork.above = function (i, clust, trim, groups, delta, delta2, sep, lwd) {
   N = length(clust$height)
   mrg = clust$merge
@@ -1167,6 +1191,7 @@ plot.fork.above = function (i, clust, trim, groups, delta, delta2, sep, lwd) {
 #' @param delta2 argument
 #' @param sep argument
 #' @param lwd Float. Line width.
+#' @export
 plot.fork.below = function (i, clust, trim, groups, delta, delta2, sep, lwd) {
   N = length(clust$height)
   mrg = clust$merge
@@ -1215,6 +1240,7 @@ plot.fork.below = function (i, clust, trim, groups, delta, delta2, sep, lwd) {
 #' @param distance Default is set to "eucledian". Distance measure used for hierarchical clustering
 #' @param linkage Default is "complete". Linkage for hierarchical clustering.
 #' @param B integer. Default is 100.
+#' @export
 gap.optimal = function(X, clust="col", distance="euclidean", linkage="complete", B=100) {
   if (clust=="col") {X = t(X)}
   if (distance=="euclidean") {
@@ -1237,6 +1263,7 @@ gap.optimal = function(X, clust="col", distance="euclidean", linkage="complete",
 #' @param linkage Default is "complete". Linkage for hierarchical clustering.
 #' @param B integer. Default is 100.
 #' @param K integer. Default is 6.
+#' @export
 gap.curve = function(X, clust="col", distance="euclidean", linkage="complete", B=100, K=6) {
   if (clust=="col") {X = t(X)}
   if (distance=="euclidean") {
@@ -1260,6 +1287,7 @@ gap.curve = function(X, clust="col", distance="euclidean", linkage="complete", B
 #' @param B integer. Default is 100.
 #' @param minSize Integer Minimum size of cluster. Default set to 10.
 #' @param maxLevel Integer. Maximum depth/level for clustering, default set to 3.
+#' @export
 part.new = function(X, clust="col", distance="euclidean", linkage="complete", B=100, minSize=10, maxLevel=3) {
   if (clust=="col") {X = t(X)}
   if (distance=="euclidean") {
@@ -1282,6 +1310,7 @@ part.new = function(X, clust="col", distance="euclidean", linkage="complete", B=
 #' @param minSize Integer Minimum size of cluster.
 #' @param maxLevel Integer. Maximum depth/level for clustering.
 #' @param K integer. Default set to 6.
+#' @export
 part.euclidean = function(X, linkage, B, minSize, maxLevel, K=6) {
   if (nrow(X) < 2*minSize) {
     return(rep(1,nrow(X)))
@@ -1326,6 +1355,7 @@ part.euclidean = function(X, linkage, B, minSize, maxLevel, K=6) {
 #' @param minSize Integer Minimum size of cluster. Default set to 10.
 #' @param maxLevel Integer. Maximum depth/level for clustering, default set to 3.
 #' @param K Integer. Default is set to 6.
+#' @export
 part.binary = function(X, linkage, B, minSize, maxLevel, K=6) {
   if (nrow(X) < 2*minSize) {
     return(rep(1,nrow(X)))
@@ -1370,6 +1400,7 @@ part.binary = function(X, linkage, B, minSize, maxLevel, K=6) {
 #' @param minSize Integer Minimum size of cluster.
 #' @param maxLevel Integer. Maximum depth/level for clustering.
 #' @param K integer. Default set to 6.
+#' @export
 part.pearson = function(X, linkage, B, minSize, maxLevel, K=6) {
   if (nrow(X) < 2*minSize) {
     return(rep(1,nrow(X)))
@@ -1414,6 +1445,7 @@ part.pearson = function(X, linkage, B, minSize, maxLevel, K=6) {
 #' @param minSize Integer Minimum size of cluster.
 #' @param maxLevel Integer. Maximum depth/level for clustering.
 #' @param K integer. Default set to 6.
+#' @export
 part.spearman = function(X, linkage, B, minSize, maxLevel, K=6) {
   if (nrow(X) < 2*minSize) {
     return(rep(1,nrow(X)))
@@ -1456,6 +1488,7 @@ part.spearman = function(X, linkage, B, minSize, maxLevel, K=6) {
 #' @param linkage Linkage for clustering.
 #' @param B integer.
 #' @param K integer. Default set to 6.
+#' @export
 gap.euclidean = function(X, linkage, B, K=6) {
   N = nrow(X)
   # Xobs = scale(X, scale=F)  ## REMOVED
@@ -1513,6 +1546,7 @@ gap.euclidean = function(X, linkage, B, K=6) {
 #' @param linkage Linkage for clustering.
 #' @param B integer.
 #' @param K integer. Default set to 6.
+#' @export
 gap.binary = function(X, linkage, B, K=6) {
   N = nrow(X)
   # Xobs = scale(X, scale=F)  ## REMOVED
@@ -1570,6 +1604,7 @@ gap.binary = function(X, linkage, B, K=6) {
 #' @param linkage Linkage for clustering.
 #' @param B integer.
 #' @param K integer. Default set to 6.
+#' @export
 gap.pearson = function(X, linkage, B, K=6)  {
   N = nrow(X)
   # Xobs = scale(X, scale=F)
@@ -1626,6 +1661,7 @@ gap.pearson = function(X, linkage, B, K=6)  {
 #' @param linkage Linkage for clustering.
 #' @param B integer.
 #' @param K integer. Default set to 6.
+#' @export
 gap.spearman = function(X, linkage, B, K=6)  {
   N = nrow(X)
   # Xobs = scale(X, scale=F)
@@ -1681,6 +1717,7 @@ gap.spearman = function(X, linkage, B, K=6)  {
 #' @param clust String. Sets direction of clustering, default is "col" (column-wise)
 #' @param B Integer.
 #' @param K Integer
+#' @export
 plot.gap = function(clust="col", B=100, K=6) {
   if (clust=="col") {
     res = gap.curve(.CLUSTERMAP$col.X, clust,
@@ -1699,6 +1736,7 @@ plot.gap = function(clust="col", B=100, K=6) {
 #' @description Get silhouettes
 #' @param clust String. Sets direction of clustering, default is "col" (column-wise)
 #' @param order String. Default is set to "tree"
+#' @export
 get.silhouette = function(clust="col", order="tree") {
   if (clust=="col") {
     if (order=="tree") {
@@ -1738,6 +1776,7 @@ get.silhouette = function(clust="col", order="tree") {
 #' @description Plot mean silhouettes
 #' @param clust String. Sets direction of clustering, default is "col" (column-wise)
 #' @param K Integer, Default is set to 10.
+#' @export
 plot.mean.silhouette = function (clust="col", K=10) {
   nclust = 2:K
   S0 = rep(NA, length(nclust))
@@ -1755,6 +1794,7 @@ plot.mean.silhouette = function (clust="col", K=10) {
 #' @description Plot Silhouettes for cluster diagnostics.
 #' @param clust String. Sets direction of clustering, default is "col" (column-wise)
 #' @param ... list
+#' @export
 plot.silhouette = function (clust="col", ...) {
   silh = get.silhouette(clust=clust, order="tree")
   nclust = length(unique(silh$cluster))
