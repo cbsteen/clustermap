@@ -185,7 +185,7 @@ hcluster = function(X, clust="col", distance="euclidean", linkage="complete", re
 
 #' subclust
 #' @description The function identifies subclusters in a dendrogram.
-#' The effect is that later calls to plot.tree will show the subclusters
+#' The effect is that later calls to draw.tree will show the subclusters
 #' in different colors. You can either provide the desired number of
 #' clusters using the argument k, or you can set k=NA to automatically
 #' estimate the number of cluster with one of two algorithms:
@@ -261,14 +261,14 @@ get.order = function(clust="col") {
   }
 }
 
-#' plot.init()
-#' @description Initiates a clustermap plot. The purpose is to make
+#' draw.init()
+#' @description Initiates a clustermap draw. The purpose is to make
 #' room on the four sides of the heatmap for additional elements such
 #' as cluster dendrograms, color bars with additional info, and labels.
 #' Supply as arguments the sides where you want such elements, with the
 #' coding side=1 (below), side=2 (left), side=3 (top), side=4 (right).
 #' @param tree Integer. Adds a dendogram to the plot on the sides specified by the argument. Default is c(2,3),
-#' which adds a dendogram on the left and top sides of the plot.
+#' which adds a dendogram on the left and top sides of the draw.
 #' @param text Integer. Adds text on specified sides.
 #' @param cbar Integer. Adds color bar(s) on specified sides.
 #' @param ckey Boolean. Adds color bar key(s) (legends). Default is TRUE.
@@ -281,11 +281,11 @@ get.order = function(clust="col") {
 #' @export
 #' @examples
 #' \dontrun{
-#' plot.init() # Make no room for additional elements
-#' plot.init(tree=c()) # Dendrogram on the left and on the top
-#' plot.init(tree=3, text=4)  # Dendrogram on the top, labels on the right
+#' draw.init() # Make no room for additional elements
+#' draw.init(tree=c()) # Dendrogram on the left and on the top
+#' draw.init(tree=3, text=4)  # Dendrogram on the top, labels on the right
 #' }
-plot.init = function(tree=c(), text=c(), cbar=c(), ckey=T, legend=F, inner=c(), outer=c()) {
+draw.init = function(tree=c(), text=c(), cbar=c(), ckey=T, legend=F, inner=c(), outer=c()){
   if (ckey) {
     # layout(matrix(c(2,3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1),6,3,byrow=TRUE))
     layout(matrix(c(2,3,3,1,1,1),2,3,byrow=T),heights=c(1,9))
@@ -495,11 +495,11 @@ color.disc = function(x, label, color, na.color) {
        key=data.frame(x=val, color=color[1+(0:(length(val)-1)) %% ncol]))
 }
 
-#' plot.hmap.key
-#' @description The function plot.hmap.key() creates a color key, i.e. a graphical overview
+#' draw.hmap.key
+#' @description The function draw.hmap.key() creates a color key, i.e. a graphical overview
 #' of what numerical values the different colors found in the heatmap correspond to.
 #' @export
-plot.hmap.key = function() {
+draw.hmap.key = function() {
   colrange = COLOR_SCALE
   xmin = -max(abs(colrange$valuerange))
   xmax = max(abs(colrange$valuerange))
@@ -523,7 +523,7 @@ plot.hmap.key = function() {
   #frame()
 }
 
-#' plot.cbar.key
+#' draw.cbar.key
 #' @description Adds key for color bar.
 #' @param border Boolean. Default set to FALSE.
 #' @param vsize float. Height of the key. Default set to 0.1
@@ -539,19 +539,19 @@ plot.hmap.key = function() {
 #' @param cex float. Text size for legend. Default is set to 0.8.
 #' @param mfrow integer vector of length 2, default set to NA.
 #' @export
-plot.cbar.key = function(border=F, vsize=0.1, hsize=0.05, hsep=0.05, vlsep=0.1, vusep=0.1,
+draw.cbar.key = function(border=F, vsize=0.1, hsize=0.05, hsep=0.05, vlsep=0.1, vusep=0.1,
                          vsize.title=0.08, cex.title=1, font.title=2, cex=0.8, mfrow=NA) {
   if (.CLUSTERMAP$legend) {
-    plot.cbar.key.samepage(border, hsize, hsep, vlsep,
+    draw.cbar.key.samepage(border, hsize, hsep, vlsep,
                            vusep, vsize.title, cex.title, font.title, cex)
   } else {
-    plot.cbar.key.separatepage(border, vsize, hsize,
+    draw.cbar.key.separatepage(border, vsize, hsize,
                                hsep, mfrow, cex.title, font.title, cex)
   }
 }
 
-#' plot.cbar.key.sampage
-#' @description If legend set to TRUE in plot.init(), plots color bar legend on the same page as heatmap.
+#' draw.cbar.key.sampage
+#' @description If legend set to TRUE in draw.init(), plots color bar legend on the same page as heatmap.
 #' @param border Boolean. Default set to FALSE.
 #' @param vsize float. Height of the key. Default set to 0.1
 #' @param hsize float. Width of the key. Default set to 0.2
@@ -563,7 +563,7 @@ plot.cbar.key = function(border=F, vsize=0.1, hsize=0.05, hsep=0.05, vlsep=0.1, 
 #' @param font.title integer. Font type for title, default is set to 2 (bold)
 #' @param cex float. Text size for legend. Default is set to 0.8.
 #' @export
-plot.cbar.key.samepage = function(border, hsize, hsep, vlsep, vusep,
+draw.cbar.key.samepage = function(border, hsize, hsep, vlsep, vusep,
                                   vsize.title, cex.title, font.title, cex) {
   legend = .CLUSTERMAP$legend
   margin = .CLUSTERMAP$margin
@@ -625,20 +625,18 @@ plot.cbar.key.samepage = function(border, hsize, hsep, vlsep, vusep,
   }
 }
 
-#' plot.cbar.key.separatepage
-#' @description If legend set to FALSE in plot.init(), plots color bar legend on a separate page than the heatmap.
+#' draw.cbar.key.separatepage
+#' @description If legend set to FALSE in draw.init(), plots color bar legend on a separate page than the heatmap.
 #' @param border Boolean. Default set to FALSE.
 #' @param vsize float. Height of the key. Default set to 0.1
 #' @param hsize float. Width of the key. Default set to 0.2
 #' @param hsep float. Horizontal separator of the colorbar keys, default set to 0.05.
-#' @param vlsep float. Vertical distance between lower part of the heatmap, and the bottom of the color bar
-#' @param vusep float. Vertical distance between upper part of the heatmap, and the bottom of the color bar.
-#' @param vsize.title float. Space for adding color bar title. Default is 0.08
 #' @param cex.title integer. Size of title font. Default is 1.
 #' @param font.title integer. Font type for title, default is set to 2 (bold)
 #' @param cex float. Text size for legend. Default is set to 0.8.
+#' @param mfrow notinuse
 #' @export
-plot.cbar.key.separatepage = function(border, vsize, hsize, hsep, mfrow,
+draw.cbar.key.separatepage = function(border, vsize, hsize, hsep, mfrow,
                                       cex.title, font.title, cex) {
   keys = .CLUSTERMAP$cbar.key
   type = .CLUSTERMAP$cbar.type
@@ -686,7 +684,7 @@ plot.cbar.key.separatepage = function(border, vsize, hsize, hsep, mfrow,
   }
 }
 
-#' plot.text
+#' draw.text
 #' @description Add labels to the sides of the heatmap.
 #' @param txt String. Text to be added to the heatmap.
 #' @param side Integer. Default is 4 (right side). Defines the side of the heatmap onto which the text will be added.
@@ -694,7 +692,7 @@ plot.cbar.key.separatepage = function(border, vsize, hsize, hsep, mfrow,
 #' @param cex Integer. Set text size.
 #' @param maxchar Integer. Default is NA. Truncates the text labels to a maximum number of characters.
 #' @export
-plot.text = function(txt, side=4, sep.outer=0, cex=0.5, maxchar=NA) {
+draw.text = function(txt, side=4, sep.outer=0, cex=0.5, maxchar=NA) {
   if (side==1 || side==3) {
     if (length(.CLUSTERMAP$colclust)>0) {
       txt = txt[.CLUSTERMAP$colclust$order]
@@ -732,7 +730,7 @@ plot.text = function(txt, side=4, sep.outer=0, cex=0.5, maxchar=NA) {
   }
 }
 
-#' plot.cbar
+#' draw.cbar
 #' @description Add a color bar with additional information to the sides of the heatmap.
 #' @param ... A list of set.color or color.cont objects
 #' @param side Integer. Default is 3. Add the color bar to a specific side of the heatmap.
@@ -746,7 +744,7 @@ plot.text = function(txt, side=4, sep.outer=0, cex=0.5, maxchar=NA) {
 #' @param border String. Color border. Default is NA. Can be set to desired color.
 #' @param lwd Integer. Default is 0.5. Thickness of border.
 #' @export
-plot.cbar = function (..., side=3, labels=T, pvalue=F, pvalue.method="chisq",
+draw.cbar = function (..., side=3, labels=T, pvalue=F, pvalue.method="chisq",
                       cex=0.8, sep.outer=0.02, sep.inner=0.2, border=NA, lwd=0.5) {
   datatype = sapply(list(...), function(x) x$type)
   groups.x = sapply(list(...), function(x) x$x)
@@ -907,7 +905,7 @@ plot.cbar = function (..., side=3, labels=T, pvalue=F, pvalue.method="chisq",
 }
 
 #' compute.hmap
-#' @description Helper function to be used by plot.hmap
+#' @description Helper function to be used by draw.hmap
 #' @param X matrix
 #' @param colorscale String. Color string separated by "-".
 #' @param xmax Integer Default is set to maximum value in input matrix X
@@ -947,7 +945,7 @@ compute.hmap = function (X, colorscale, xmax, col.na) {
   return(pict)
 }
 
-#' plot.hmap
+#' draw.hmap
 #' @description plots heatmaps of a numerical data matrix X.
 #' @param X matrix
 #' @param colorscale String. Three (valid R) colors separated by hyphens used to represent the values as colors
@@ -956,9 +954,8 @@ compute.hmap = function (X, colorscale, xmax, col.na) {
 #' @param col.na String. Default is set to "grey". Specifies color of missing data.
 #' @param as.image Boolean. Default is set to T
 #' @param interpolate Boolean. Default is set to F.
-#' @param origin Integer. Default is set to 0.
 #' @export
-plot.hmap = function(X, colorscale="blue-white-red", xmax=NA, col.na="grey", as.image=T, interpolate=F) {
+draw.hmap = function(X, colorscale="blue-white-red", xmax=NA, col.na="grey", as.image=T, interpolate=F) {
   m = .CLUSTERMAP$margin
   plot(0, 0, type="n", xaxt="n", yaxt="n", xlab="", ylab="",
        xlim=c(-m$inner[2]-m$outer[2],1+m$inner[4]+m$outer[4]),
@@ -986,7 +983,7 @@ plot.hmap = function(X, colorscale="blue-white-red", xmax=NA, col.na="grey", as.
   }
 }
 
-#' plot.tree
+#' draw.tree
 #' @description Adds a dendogram to heatmap.
 #' @param groups Identified groups
 #' @param side Integer. Side onto which the tree is plotted on the heatmap. Default is 3 (top)
@@ -995,7 +992,7 @@ plot.hmap = function(X, colorscale="blue-white-red", xmax=NA, col.na="grey", as.
 #' @param trim Boolean. Default set to TRUE.
 #' @param colors String. Default set to NA. Colors the clusters.
 #' @export
-plot.tree = function (groups, side=3, sep=0.03, lwd=0.5, trim=T, colors=NA) {
+draw.tree = function (groups, side=3, sep=0.03, lwd=0.5, trim=T, colors=NA) {
   if (side==1 || side==3) {
     clust = .CLUSTERMAP$colclust
     if (missing(groups)) {
@@ -1018,18 +1015,18 @@ plot.tree = function (groups, side=3, sep=0.03, lwd=0.5, trim=T, colors=NA) {
   margin = .CLUSTERMAP$margin
   d = margin$inner[side]; d2 = margin$outer[side]; g = as.numeric(groups)
   if (side == 1) {
-    invisible(plot.fork.below(length(clust$height), clust, trim, g, d, d2, sep, lwd))
+    invisible(draw.fork.below(length(clust$height), clust, trim, g, d, d2, sep, lwd))
   } else if (side == 2) {
-    invisible(plot.fork.left(length(clust$height), clust, trim, g, d, d2, sep, lwd))
+    invisible(draw.fork.left(length(clust$height), clust, trim, g, d, d2, sep, lwd))
   } else if (side == 3) {
-    invisible(plot.fork.above(length(clust$height), clust, trim, g, d, d2, sep, lwd))
+    invisible(draw.fork.above(length(clust$height), clust, trim, g, d, d2, sep, lwd))
   } else if (side == 4) {
-    invisible(plot.fork.right(length(clust$height), clust, trim, g, d, d2, sep, lwd))
+    invisible(draw.fork.right(length(clust$height), clust, trim, g, d, d2, sep, lwd))
   }
 }
 
-#' plot.for.left
-#' @description Plots on the left side of the heatmap. Function called by plot.tree()
+#' draw.for.left
+#' @description Plots on the left side of the heatmap. Function called by draw.tree()
 #' @param i argument
 #' @param clust argument
 #' @param trim argument
@@ -1039,7 +1036,7 @@ plot.tree = function (groups, side=3, sep=0.03, lwd=0.5, trim=T, colors=NA) {
 #' @param sep argument
 #' @param lwd Float. Line width.
 #' @export
-plot.fork.left = function (i, clust, trim, groups, delta, delta2, sep, lwd) {
+draw.fork.left = function (i, clust, trim, groups, delta, delta2, sep, lwd) {
   N = length(clust$height)
   mrg = clust$merge
   if (trim) {
@@ -1058,7 +1055,7 @@ plot.fork.left = function (i, clust, trim, groups, delta, delta2, sep, lwd) {
       group[j] = groups[k]
     }
     else {
-      tmp = plot.fork.left(mrg[i, j], clust, trim, groups, delta, delta2, sep, lwd)
+      tmp = draw.fork.left(mrg[i, j], clust, trim, groups, delta, delta2, sep, lwd)
       a[j] = tmp[1]
       b0 = -delta - sep - delta2 * tmp[2]
       group[j] = tmp[3]
@@ -1080,8 +1077,8 @@ plot.fork.left = function (i, clust, trim, groups, delta, delta2, sep, lwd) {
   }
 }
 
-#' plot.for.right
-#' @description Plots on the right side of the heatmap. Function called by plot.tree()
+#' draw.for.right
+#' @description Plots on the right side of the heatmap. Function called by draw.tree()
 #' @param i argument
 #' @param clust argument
 #' @param trim argument
@@ -1091,7 +1088,7 @@ plot.fork.left = function (i, clust, trim, groups, delta, delta2, sep, lwd) {
 #' @param sep argument
 #' @param lwd Float. Line width.
 #' @export
-plot.fork.right = function (i, clust, trim, groups, delta, delta2, sep, lwd) {
+draw.fork.right = function (i, clust, trim, groups, delta, delta2, sep, lwd) {
   N = length(clust$height)
   mrg = clust$merge
   if (trim) {
@@ -1110,7 +1107,7 @@ plot.fork.right = function (i, clust, trim, groups, delta, delta2, sep, lwd) {
       group[j] = groups[k]
     }
     else {
-      tmp = plot.fork.right(mrg[i, j], clust, trim, groups, delta, delta2, sep, lwd)
+      tmp = draw.fork.right(mrg[i, j], clust, trim, groups, delta, delta2, sep, lwd)
       a[j] = tmp[1]
       b0 = 1+delta+sep+delta2*tmp[2]
       group[j] = tmp[3]
@@ -1132,8 +1129,8 @@ plot.fork.right = function (i, clust, trim, groups, delta, delta2, sep, lwd) {
   }
 }
 
-#' plot.for.above
-#' @description Plots above the heatmap. Function called by plot.tree()
+#' draw.for.above
+#' @description Plots above the heatmap. Function called by draw.tree()
 #' @param i argument
 #' @param clust argument
 #' @param trim argument
@@ -1143,7 +1140,7 @@ plot.fork.right = function (i, clust, trim, groups, delta, delta2, sep, lwd) {
 #' @param sep argument
 #' @param lwd Float. Line width.
 #' @export
-plot.fork.above = function (i, clust, trim, groups, delta, delta2, sep, lwd) {
+draw.fork.above = function (i, clust, trim, groups, delta, delta2, sep, lwd) {
   N = length(clust$height)
   mrg = clust$merge
   if (trim) {
@@ -1161,7 +1158,7 @@ plot.fork.above = function (i, clust, trim, groups, delta, delta2, sep, lwd) {
       b0 = 1 + delta + sep
       group[j] = groups[k]
     } else { # Inner node
-      tmp = plot.fork.above(mrg[i,j], clust, trim, groups, delta, delta2, sep, lwd)
+      tmp = draw.fork.above(mrg[i,j], clust, trim, groups, delta, delta2, sep, lwd)
       a[j] = tmp[1]
       b0 = 1 + delta + sep + delta2 * tmp[2]
       group[j] = tmp[3]
@@ -1181,8 +1178,8 @@ plot.fork.above = function (i, clust, trim, groups, delta, delta2, sep, lwd) {
   }
 }
 
-#' plot.for.below
-#' @description Plots below the heatmap. Function called by plot.tree()
+#' draw.for.below
+#' @description Plots below the heatmap. Function called by draw.tree()
 #' @param i argument
 #' @param clust argument
 #' @param trim argument
@@ -1192,7 +1189,7 @@ plot.fork.above = function (i, clust, trim, groups, delta, delta2, sep, lwd) {
 #' @param sep argument
 #' @param lwd Float. Line width.
 #' @export
-plot.fork.below = function (i, clust, trim, groups, delta, delta2, sep, lwd) {
+draw.fork.below = function (i, clust, trim, groups, delta, delta2, sep, lwd) {
   N = length(clust$height)
   mrg = clust$merge
   if (trim) {
@@ -1211,7 +1208,7 @@ plot.fork.below = function (i, clust, trim, groups, delta, delta2, sep, lwd) {
       group[j] = groups[k]
     }
     else {
-      tmp = plot.fork.below(mrg[i, j], clust, trim, groups, delta, delta2, sep, lwd)
+      tmp = draw.fork.below(mrg[i, j], clust, trim, groups, delta, delta2, sep, lwd)
       a[j] = tmp[1]
       b0 = -delta-sep-delta2*tmp[2]
       group[j] = tmp[3]
@@ -1712,13 +1709,13 @@ gap.spearman = function(X, linkage, B, K=6)  {
   list(k=k.opt, gap=res, sk=sk, group=Pobs[,k.opt])
 }
 
-#' plot.gap
+#' draw.gap
 #' @description Plots gap statistic
 #' @param clust String. Sets direction of clustering, default is "col" (column-wise)
 #' @param B Integer.
 #' @param K Integer
 #' @export
-plot.gap = function(clust="col", B=100, K=6) {
+draw.gap = function(clust="col", B=100, K=6) {
   if (clust=="col") {
     res = gap.curve(.CLUSTERMAP$col.X, clust,
                     .CLUSTERMAP$col.distance, .CLUSTERMAP$col.linkage, B, K)
@@ -1732,7 +1729,7 @@ plot.gap = function(clust="col", B=100, K=6) {
   points(res$k, res$gap[res$k], pch=19, col="red")
 }
 
-#' plot.silhouette
+#' draw.silhouette
 #' @description Get silhouettes
 #' @param clust String. Sets direction of clustering, default is "col" (column-wise)
 #' @param order String. Default is set to "tree"
@@ -1772,12 +1769,12 @@ get.silhouette = function(clust="col", order="tree") {
   return(tab)
 }
 
-#' plot.mean.silhouette
+#' draw.mean.silhouette
 #' @description Plot mean silhouettes
 #' @param clust String. Sets direction of clustering, default is "col" (column-wise)
 #' @param K Integer, Default is set to 10.
 #' @export
-plot.mean.silhouette = function (clust="col", K=10) {
+draw.mean.silhouette = function (clust="col", K=10) {
   nclust = 2:K
   S0 = rep(NA, length(nclust))
   for (k in 1:length(nclust)) {
@@ -1790,12 +1787,12 @@ plot.mean.silhouette = function (clust="col", K=10) {
   points(nclust[k.opt], S0[k.opt], pch=19, col="red")
 }
 
-#' plot.silhouette
+#' draw.silhouette
 #' @description Plot Silhouettes for cluster diagnostics.
 #' @param clust String. Sets direction of clustering, default is "col" (column-wise)
 #' @param ... list
 #' @export
-plot.silhouette = function (clust="col", ...) {
+draw.silhouette = function (clust="col", ...) {
   silh = get.silhouette(clust=clust, order="tree")
   nclust = length(unique(silh$cluster))
   N = length(silh$S)

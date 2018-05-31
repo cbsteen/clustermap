@@ -2,7 +2,7 @@
 % Please edit documentation in R/clustermap.R
 \name{get.silhouette}
 \alias{get.silhouette}
-\title{plot.silhouette}
+\title{draw.silhouette}
 \usage{
 get.silhouette(clust = "col", order = "tree")
 }

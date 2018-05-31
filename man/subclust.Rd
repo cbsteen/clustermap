@@ -24,7 +24,7 @@ by one of two algorithms: gap (default) (Tibshirani et al. (2001), J Roy Statist
 }
 \description{
 The function identifies subclusters in a dendrogram.
-The effect is that later calls to plot.tree will show the subclusters
+The effect is that later calls to draw.tree will show the subclusters
 in different colors. You can either provide the desired number of
 clusters using the argument k, or you can set k=NA to automatically
 estimate the number of cluster with one of two algorithms:

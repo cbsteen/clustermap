@@ -16,5 +16,5 @@ compute.hmap(X, colorscale, xmax, col.na)
 \item{col.na}{String. Specifies color of missing data. Default set to "grey".}
 }
 \description{
-Helper function to be used by plot.hmap
+Helper function to be used by draw.hmap
 }
