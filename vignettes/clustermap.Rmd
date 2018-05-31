@@ -1,6 +1,6 @@
 ---
 title: "clustermap"
-author: "Ole Christian Lingjærde & Chloé B. Steen"
+author: "Ole C. Lingjærde & Chloé B. Steen"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -15,103 +15,162 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
-Clustermap is a collection of R functions for hierarchical clustering and heatmap visualisation of numerical data matrices. It is designed with two specific aims in mind: ease of use and flexibility. This manual will present some general features of `clustermap`, provide a more in-depth descriptions of the functions implemented in `clustermap` and finally, guide the user through a number of examples of increasing complexity.
+Clustermap is a collection of R functions for hierarchical clustering, determination of the number of clusters, and heatmap visualisation. The package produces high-quality annotated heatmaps, makes the user determine the visual design, and has a user-friendly interface. Even users with little R experience will be able to produce pretty figures at a fast pace, while more experienced users will appreciate the modular design that allows the package to be extended with new functionality. 
+
+Clustermap is designed with the philosophy that technical parameters and quantities calculated from the data should be hidden from sight whenever possible, while still being available to the advanced user. All technical parameters have default values that works well for most applications, but they can be changed easily when desired. Full access to such parameters and the modular design allows advanced users to integrate their own code with Clustermap. 
+
+Clustermap offers a variety of solutions and options through a simple, intuitive interface. Colors in heatmaps and annotation color bars are easily changed, requiring no prior knowledge of color handling in R. Heatmaps may be clustered row-wise, column-wise or both, and the user determines which of the cluster dendrograms should be plotted and where to plot them relative to the heatmap. The number of clusters may be found automatically with one of the two provided algorithms Gap or PART, or may be set manually by the user. Diagnostic plots such as silhouette plots and Gap plots are fully integrated in the package and can be produced in an instant to guide the manual choice of the number of clusters. 
+
+This manual will present some general features of the package `clustermap and provide a more in-depth description of the functions implemented in the package. Finally, a number of examples of increasing sophistication and complexity will guide the user through many of the features of the package. These examples are designed to contain only the essential code and can be used as program patterns to be copied and pasted into one's own code.
 
 ## 1. General notes
 
-###Data format
-`clustermap` takes in any numeric matrix as input dataset. 
-
-###The `clustermap` approach
-Some of the functions in this package require other functions to have been performed in advance. For example, to display dendrograms along the sides of the heatmap, you must first have performed clustering.
-
-Stick to this order and you will be safe:
+###Installation
+To install clustermap from GitHub, you need the package devtools. Once you have installed devtools, you can install clustermap using the following code.
 
 ```
-plot.init -> 
-    hcluster ->   
-       subclust -> 
-            plot.hmap, set.color, plot.cbar, plot.tree -> 
-                                                   plot.ckey
+library(devtools)
+install_github("cbsteen/clustermap")
 ```
-`plot.init` erases any memory of past calls made to any of the functions in the package, so you get a fresh start. `hcluster` is used to cluster either columns or rows and you specify what type of clustering you would like (linkage, distance, etc). `subclust` may not be required in your analysis; what it does is to determine how many distinct clusters are actually present in the preceeding clustering. And then comes a series of plot functions to show the heatmap, any color bars you may want to show on the left/right or bottom/top of the heatmap, the cluster trees, and finally a color key (`plot.ckey`) that explains what values the heatmap colors represent.
 
-###Plot to file
-Plotting to a file is generally much faster than plotting to a graphics window. It is recommended that you start the session by opening a file as a plot device using e.g. pdf("filename.pdf") and then at the end of the session use dev.off() to close the device. This will be shown in the examples given further below.
+###Input format
+Clustermap accepts any numerical matrix as input for the heatmap, and any vector of numerical values or character values for annotation bars. Missing values (NA's) are accepted in both cases and will be shown in a user-defined color (default is grey for both heatmap and annotation bars).
+
+###Output format
+The main output from Clustermap is a plot depicting a clustered heatmap with or without annotation. Additional output may include diagnostic plots (e.g. to assess then number of clusters)  as well as tables providing information about the cluster identify of individual rows and columns. By default, the output is shown in a graphics window on the screen; however, the output is easily re-directed to file by encapsulating the code with appropriate statements as shown below. Try `help(Devices)` in R to read more about graphics device options; note that the options available may depend on your computing platform and your version of R. 
+
+```
+pdf("Figure.pdf") 
+<code to plot a clustered heatmap>
+dev.off() 
+```
+
+###The structure of a Clustermap plot
+The main plot produced by Clustermap has the following general structure:
+
+*	**Core region**: this is where the heatmap is shown
+
+*	**Inner margin**: surrounds the heatmap on all sides and this is where the annotation bars are shown, providing additional information about rows or columns
+
+*	**Outer margin**: surrounds the inner margin on all sides and this is where cluster trees, row/column labels and the legend for the annotation bars are shown
+
+The size of the inner and outer margins is automatically set by Clustermap during the initialization, where the user declares what type of information the plot will contain. For example, if the user wants to show a heatmap with no additional information (not even cluster trees), then inner and outer margins will be set to (essentially) zero. If the user wants to show a heatmap with cluster trees on the left hand side of the heatmap, then the left outer margin will be set to 0.3 (meaning 30% of the width of the core region). Likewise, if the user wants to show a heatmap with annotation bars above the heatmap, then the top inner margin will be set to 0.1 (meaning 10% of the height of the core region). Margin sizes defined by Clustermap are not always appropriate for the problem at hand. For example, the user may want to show many annotation bars above the heatmap, in which case the default top inner margin could be too narrow. During the initialization of the plot, the user may add or subtract space from inner and outer margins using the arguments  `inner`  and  `outer`. For example, the argument `inner=c(0, 0, 0.3, 0)` would extend the top inner margin by 30% of the height of the core region. To see what the current inner and outer margins are set to, you can look at the system variable `.CLUSTERMAP$margin.` Note that system variables are not defined before you have performed plot initialization. 
+
+###The structure of the code
+Clustermap plots are constructed by supplying a sequence of commands, each performing a particular computational task or adding a particular feature to the plot. This approach offers an alternative to "all-in-one" solutions performing most of the computations and the graphical rendering by a single call to a function with a huge number of arguments. The Clustermap approach allows the user to control (and if desired save results from) every step of the process, and individual elements can be left out or included as desired. In order to keep the code simple and intuitive, most of the parameters and variables that need to be transferred between function calls are stored in a global environment variable .CLUSTERMAP and are hidden to the user.
+
+A certain ordering of the function calls must be respected in order to ensure that all required parameters are defined prior to a given function call. For example, a call to plot.tree() to plot a cluster dendrogram can only be done after a call to hcluster() to compute the clustering. There are multiple advantages of separating the clustering computation and the plotting of the cluster, some of which will be illustrated in the examples later. 
+
+As a general guideline, the functions in clustermap should be called in the following order:
+```
+1. plot.init		          # Always required
+2. hcluster 		          # If clustering is required
+3. subclust		            # If subcluster identification is required
+4. plot.hmap		          # If heatmap is required
+5. plot.tree		          # If annotation is required
+   plot.text
+   set.color
+   plot.cbar		
+
+6. plot.cbar.key	        # If a legend for the color bars is required
+7. plot.hmap.key		      # If a color map for the heatmap is required  
+8. plot.silhouette        # Diagnostic plots
+   plot.mean.silhouette
+   get.silhouette
+   plot.gap                             
+```
+
+The function `plot.init` erases any memory of past calls made to any of the functions in the package, so you get a fresh start. The function `hcluster` is used to cluster either columns or rows and you specify what type of clustering you would like (linkage, distance, etc). The function `subclust` may or may not be required in your analysis; what it does is to determine how many distinct clusters are actually present in the preceding clustering. And then comes a series of plot functions to show the heatmap, any color bars you may want to show on the left/right or bottom/top of the heatmap, the cluster trees, a color key (`plot.hmap.key`) that explains what values the heatmap colors represent, etc. 
 
 ###Dependencies
-`clustermap` loads the packages `gclus` and `clusterGenomics`. These packages may be installed separately using the following commands:
+The packages `graphics` and `gclus` are utilized by `clustermap` and needs to be installed in advance. To do this, give the following command to R: 
 ```
+install.packages("graphics")
 install.packages("gclus")
-install.packages("clusterGenomics")
 ```
-or using the Package Installer inside R, found under the menu item 'Packages & Data'. 
+or use the Package Installer inside R, found under the menu item ‘Packages & Data’.
 
 ###Colors
-To change the colors used in the heatmap, provide your preferred color scale as an argument to plot.hmap, e.g.
-
+To change the colors used in the heatmap, provide your preferred color scale as an argument `to plot.hmap`. For example, the call
 ```
 plot.hmap(X, colorscale="green-white-red")
 ```
-to use a color scale ranging from green (for negative values) via white (for value 0) to red (for positive values). 
-
-You may provide any three color names supported by R; just a few examples:
+plots a heatmap for the input data matrix X, using a color scale ranging from green (for negative values) via white (for value 0) to red (for positive values). The highest green intensity is achieved for values in X that are equal to all lower than -xmax, while the highest red intensity is achieved for values in X that are equal to or higher than xmax, where xmax is a positive constant. The default value of xmax is max(abs(X)). To overrule the default value, use the argument xmax in plot.hmap as in this example: 
+```
+plot.hmap(X, colorscale="yellow-white-blue", xmax=1)
+```
+For the color specification, you may provide any three color names supported by R; here are a few examples:
 
 * `blue-white-red`
+
 * `green-black-red`
+
 * `lightgrey-grey-darkgrey`
+
 * `magenta-cyan-pink`
 
 To obtain a textual overview of all colors available, give the command colors() or to see a visual overview over colors available, see <http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf>.
 
-## 2. Functions in `clustermap`
+###Reference
+*Clustermap: an extensible R package for clustering and generating annotated heatmaps.* Ole Christian Lingjærde\*, Chloé Beate Steen\*, Miriam Ragle Aure, Vilde Drageset Haakensen (submitted)
+
+\* Corresponding authors, contributed equally to this work.
+
+## 2. Functions in Clustermap
 
 ###Summary of `clustermap` functions
-`plot.init`		Call this first to set up correct margins etc
+`plot.init Call this first to set up correct margins etc
 
-`plot.hmap` 	Plot heatmap using your preferred colors
+`plot.hmap` Plot heatmap using your preferred colors
 
-`plot.cbar` 	Add color bar to one of the sides (to add extra info)
+`plot.cbar` Add color bar to one of the sides (to add extra info)
 
-`plot.tree`		Add column or row dendrogram to a heatmap
+`plot.tree` Add column or row dendrogram to a heatmap
 
-`hcluster`     	Perform hierarchical clustering of rows or columns
+`hcluster` Perform hierarchical clustering of rows or columns
 
-`subclust`		Guided or automatic identification of subclusters
+`subclust` Guided or automatic identification of subclusters
 
-`get.subclust`  Get subtype labels (for original row/col ordering of X)
+`get.subclust` Get subtype labels (for original row/col ordering of X)
 
-`set.color`     Set color coding for accompanying data
+`set.color` Set color coding for accompanying data
 
 `plot.hmap.key` Plot color key for heatmap
 
-`plot.cbar.key`	Plot color key for color bar (annotation bars)
+`plot.cbar.key` Plot color key for color bar (annotation bars)
 
-`plot.text`		Add text to one of the sides (for row/column labels)
+`plot.text` Add text to one of the sides (for row/column labels)
 
-`plot.silhouette`  Silhouette plot
+`plot.silhouette` Silhouette plot
 
-`blocks`		Generate an example data set with 110 rows and 40 columns
+`plot.mean.silhouette` Mean silhouette score plot
+
+`plot.gap` Gap score plot
+
+`blocks` Generate an example data set with 110 rows and 40 columns
+
 
 ###plot.init()
 `plot.init` is used to initiate a plot. 
 
 The purpose is to make room on the four sides of the heatmap for additional elements such as cluster dendrograms, color bars with additional info, and labels. Supply as arguments the sides where you want such elements, with the coding 
 
-side=1 (below)
-side=2 (left)
-side=3 (top)
-side=4 (right)
+side=1  below the heatmap
+side=2  left side of the heatmap
+side=3  above the heatmap
+side=4  right side of the heatmap
 
-If you want a tree (=dendrogram) on the left and top, let tree=c(2,3).
-If you want text labels on the right, let text=4. 
-If you want color bars below the plot, let cbar=1. 
+If you want a tree (=dendrogram) on the left and top, let `tree=c(2,3)`.
+If you want text labels on the right, let `text=4`. 
+If you want color bars below the plot, let `cbar=1`. 
 
 Examples:
 ```
-`plot.init()`                # Dendrogram on the left and on the top
-`plot.init(tree=c())`        # Make no room for additional elements
-`plot.init(tree=3, text=4)`  # Dendrogram on the top, labels on the right
+plot.init()                # Dendrogram on the left and on the top
+
+plot.init(tree=c())       # Make no room for additional elements
+
+plot.init(tree=3, text=4)  # Dendrogram on the top, labels on the right
 ```
 The last two arguments of `plot.init` (`inner` and `outer`) do not overrule the other parameters, but allows the user to add (or even subtract) a specific amount of space in the inner and outer margins on a specified side of the heatmap. They may be used alone, or in combination with other parameters. They should always be vectors of length 4 giving the desired margin extension for each of the four sides. An example of use would be to extend an inner margin by a certain amount because we plan to show many bar plots of accompanying data there that we want to give some space. Note that inner=c(0.4,0.4,0.4,0.4) means that each inner margin should be extended by a length corresponding to 0.4 times the total length (in that direction) of the heatmap itself.
 
@@ -137,7 +196,7 @@ Some examples: "green-black-red", "yellow-black-blue", "black-white-black" (to i
 ###Set up everything
 The following code sets up a simple example data set that can be used to run the examples below. It creates a hypothetical gene expression matrix consisting of 110 genes as rows, and 40 patient samples as columns. The `y1` vector contains information about cancer subtype of each sample. The `y2` vector contains information about stage, and finally the `y3` vector about immune score. 
 
-```
+```{r}
 library(clustermap) # Make package functions available
 tmp = blocks() # Contains the 110x40-matrix X and 40-vectors y1,y2,y3
 X = tmp$X
@@ -148,43 +207,37 @@ y3 = tmp$y3
 
 ###How to create a heatmap
 The following code creates a simple heatmap with no clustering, using the default color-scale ("blue-white-red") and adds the key for the color scale. 
-```
-pdf("Example1.pdf")
+
+```{r, echo=FALSE}
 plot.init()
 plot.hmap(X)
 plot.hmap.key()
-dev.off()
 ```
 
 ###Heatmap and clustering of columns
 The following example shows how to cluster columns in a heatmap using the `hcluster()` function, and how to add a tree (dendogram) resulting from the column-wise clustering on the top side of the heatmap (`side=3`).
 ```
-pdf("Example2.pdf")
 plot.init(tree=3)
 hcluster(X, clust="col", distance="pearson", linkage="complete")
 plot.hmap(X) 
 plot.tree(side=3)
 plot.hmap.key()
 frame()
-dev.off()
 ```
 
 ###Heatmap and clustering of rows
 This example is the same as the previous one, except that this time the clustering is performed row-wise, and the tree is added on the left side of the heatmap (`side=2`). 
 ```
-pdf("Example3.pdf")
 plot.init(tree=2)
 hcluster(X, clust="row", distance="euclidean", linkage="complete")
 plot.hmap(X)
 plot.tree(side=2)
 plot.hmap.key()
-dev.off()
 ```
 ###Heatmap and clustering of rows and columns
 Similar example as above, where the clustering is performed both row-wise and column-wise, and trees are added on the left side and on the top of the heatmap. 
 
 ```
-pdf("Example4.pdf")
 plot.init(tree=c(2,3))
 hcluster(X, clust="row", distance="euclidean", linkage="complete")
 hcluster(X, clust="col", distance="euclidean", linkage="complete")
@@ -192,15 +245,13 @@ plot.hmap(X)
 plot.tree(side=2)
 plot.tree(side=3)
 plot.hmap.key()
-dev.off()
 ```
 
 ###Heatmap, clustering of rows and columns, and colorbar below heatmap
 The following example adds a color bar at the bottom of heatmap, with a discrete color scales made up of 5 colors, using the `y1` vector. The color bar is labeled "Subtype". 
 
 ```
-pdf("Example5.pdf")
-plot.init(tree=c(2,3), cbar=1, text=4)
+plot.init(tree=c(2,3), cbar=1, ckey=T, legend=T, text=4)
 hcluster(X, clust="row", distance="euclidean", linkage="complete")
 hcluster(X, clust="col", distance="euclidean", linkage="complete")
 plot.hmap(X)
@@ -208,17 +259,29 @@ plot.tree(side=2)
 plot.tree(side=3)
 z1 = set.color(y1, label="Subtype", type="discrete", color=c("red", "pink", "darkblue", "lightblue", "green"))
 plot.cbar(z1, side=1)
-plot.hmap.key()
 plot.cbar.key()
-dev.off()
+plot.hmap.key()
+```
+
+The legend is large compared to the heatmap, so we can make it smaller by increasing the distance between the upper part of the heatmap and the upper part of the key, by setting the `vsize` argument to `0.3`.
+```
+plot.init(tree=c(2,3), cbar=1, ckey=T, legend=T, text=4)
+hcluster(X, clust="row", distance="euclidean", linkage="complete")
+hcluster(X, clust="col", distance="euclidean", linkage="complete")
+plot.hmap(X)
+plot.tree(side=2)
+plot.tree(side=3)
+z1 = set.color(y1, label="Subtype", type="discrete", color=c("red", "pink", "darkblue", "lightblue", "green"))
+plot.cbar(z1, side=1)
+plot.cbar.key(vusep=0.5)
+plot.hmap.key()
 ```
 
 ###How to add multiple color bars below a heatmap
 The following example shows how to add multiple color bars below a heatmap, to provide information about cancer subtype (`z1`), stage (`z2`) and immune score (`z3`). This is done by providing multiple `set.color` objects, here called `z1`, `z2` and `z3` to the `plot.cbar` function. 
 
 ```
-pdf("Example6.pdf")
-plot.init(tree=c(2,3), cbar=1, text=4)
+plot.init(tree=c(2,3), cbar=1, legend=T, text=4)
 hcluster(X, clust="row", distance="euclidean", linkage="complete")
 hcluster(X, clust="col", distance="euclidean", linkage="complete")
 plot.hmap(X)
@@ -228,35 +291,35 @@ z1 = set.color(y1, label="Subtype", type="discrete", color=c("red", "pink", "dar
 z2 = set.color(y2, label="Stage", type="discrete", color=rainbow(8))
 z3 = set.color(y3, label="Immune score", type="continuous", color="white-blue")
 plot.cbar(z1, z2, z3, border="black", side=1)
+plot.cbar.key()
 plot.hmap.key()
-dev.off()
 ```
 
 ###Add row labels to a heatmap
 The following code adds the rownames of the dataset `X` as row labels to the heatmap, using the function `plot.text`. The size the text is set using the argument `cex`, and the placement of the text using the argument `side`, where here `4` refers to the right side of the heatmap. 
 
 ```
-pdf("Example7.pdf")
-plot.init(tree=c(2,3), cbar=3, text=4)
-hcluster(X, clust="row", distance="euclidean", linkage="complete")
-hcluster(X, clust="col", distance="euclidean", linkage="complete")
-plot.hmap(X)
+xsub = X[sample(40),]
+plot.init(tree=c(2,3), cbar=3, legend=T, text=4)
+hcluster(xsub, clust="row", distance="euclidean", linkage="complete")
+hcluster(xsub, clust="col", distance="euclidean", linkage="complete")
+plot.hmap(xsub)
 plot.tree(side=2)
 plot.tree(side=3)
 z1 = set.color(y1, label="Subtype", type="discrete", color=c("red", "pink", "darkblue", "lightblue", "green"))
 z2 = set.color(y2, label="Stage", type="discrete", color=palette())
 z3 = set.color(y3, label="Immune score", type="continuous", color="black-yellow")
 plot.cbar(z1, z2, z3, border="black", side=3)
-plot.text(rownames(X), cex=0.3, side=4)
+plot.text(rownames(xsub), cex=0.7, side=4)
+plot.cbar.key(hsep=0.15)
 plot.hmap.key()
-dev.off()
 ```
 
 ###Add columns labels to a heatmap
 Similarly to the example above, labels can be added to columns using the `plot.text()` function. The size the text is set using the argument `cex`, and the placement of the text using the argument `side`, where here `3` refers to the top of the heatmap. 
 
 ```
-pdf("Example8.pdf")
+pdf("example_1.pdf")
 plot.init(tree=c(2,3), cbar=3, text=c(1,4))
 hcluster(X, clust="row", distance="euclidean", linkage="complete")
 hcluster(X, clust="col", distance="euclidean", linkage="complete")
@@ -267,7 +330,7 @@ z1 = set.color(y1, label="Subtype", type="discrete", color=c("red", "pink", "dar
 z2 = set.color(y2, label="Stage", type="discrete", color=palette())
 z3 = set.color(y3, label="Immune score", type="continuous", color="black-yellow")
 plot.cbar(z1, z2, z3, border="black", side=3)
-plot.text(colnames(X), cex=0.3, side=1)
+plot.text(colnames(X), cex=0.7, side=1)
 plot.hmap.key()
 dev.off()
 ```
@@ -276,7 +339,6 @@ dev.off()
 The following example illustrates how to cut a dendrogram into `k=3` clusters and show in plot. The function `subclust()` is used to identify 3 clusters column-wise (`clust="col"`). To highlight the new tree with the colored clusters, the `lwd` argument in `plot.tree` is set to `2` to make the branches thicker. 
 
 ```
-pdf("Example9.pdf")
 plot.init(tree=c(2,3))
 hcluster(X, clust="row", distance="euclidean", linkage="complete")
 hcluster(X, clust="col", distance="euclidean", linkage="complete")
@@ -285,14 +347,12 @@ plot.hmap(X)
 plot.tree(side=2)
 plot.tree(side=3, lwd=2)
 plot.hmap.key()
-dev.off()
 ```
 
 ##Heatmap, clustering of rows and columns, estimate subclusters
 The example above used a set number of clusters (`k=3`). But the number of clusters can also be automatically estimated using for example the GAP algorithm, which is default in the `subclust()` function. The other option is to use the PART algorithm, not shown here. The estimated clusters can then be visualized. Both row-wise and column-wise subclustering is shown. 
 
 ```
-pdf("Example10.pdf")
 plot.init(tree=c(2,3))
 hcluster(X, clust="row", distance="euclidean", linkage="complete")
 hcluster(X, clust="col", distance="euclidean", linkage="complete")
@@ -302,14 +362,12 @@ plot.hmap(X)
 plot.tree(side=2)
 plot.tree(side=3)
 plot.hmap.key()
-dev.off()
 ```
 
 ###Heatmap, clustering of rows and columns, estimate subclusters
 The previous example estimated the number of subclusters with the default algorithm gap. Here an example is shown where the number of subclusters is determined with the PART algorithm, set by the `method` argument of the subclust `function`. Both row-wise and column-wise subclustering is shown. 
 
 ```
-pdf("Example11.pdf")
 plot.init(tree=c(2,3))
 hcluster(X, clust="row", distance="euclidean", linkage="complete")
 hcluster(X, clust="col", distance="euclidean", linkage="complete")
@@ -319,15 +377,13 @@ plot.hmap(X)
 plot.tree(side=2)
 plot.tree(side=3)
 plot.hmap.key()
-dev.off()
 ```
 
 ###Heatmap, clustering of rows and columns, estimate subclusters, perform tests
 After estimating subclusters, the user can test the association between additional info parameters and subclusters. This is done using the `plot.cbar()` function, which adds additional information to heatmap, and by specifying the `pvalue.method`, here `"fisher"`, a p-value showing the association between the subclusters and the color bar added is displayed on the heatmap. 
 
 ```
-pdf("Example12.pdf")
-plot.init(tree=c(2,3), cbar=3, text=4)
+plot.init(tree=c(2,3), cbar=3, legend= T, text=4)
 hcluster(X, clust="col", distance="euclidean", linkage="complete")
 hcluster(X, clust="row", distance="euclidean", linkage="complete")
 subclust(NA, clust="col", method="part")
@@ -339,16 +395,14 @@ z3 = set.color(y3, label="Immune score", type="continuous", color="black-yellow"
 plot.cbar(z1, z2, z3, pvalue=T, pvalue.method="fisher", border="black", side=3)
 plot.tree(side=2)
 plot.tree(side=3)
-plot.hmap.key()
 plot.cbar.key()
-dev.off()
+plot.hmap.key()
 ```
 
 ###Clustered heatmap where the clustering is derived from another data set 
 Sometimes, it is useful to apply the clustering estimated using one dataset, to another dataset of the same size, for example is one wishes to follow patient samples over time, using the original subgrouping identified in the first samples. This is done by plotting a heatmap using another dataset with the `plot.hmap()` function, right after having performed the clustering on the original dataset with `hcluster()`. 
 
 ```
-pdf("Example13.pdf")
 plot.init(tree=c(2,3))
 hcluster(X, clust="row", distance="euclidean", linkage="complete")
 hcluster(X, clust="col", distance="euclidean", linkage="complete")
@@ -357,7 +411,6 @@ plot.hmap(Xnew)
 plot.tree(side=2)
 plot.tree(side=3)
 plot.hmap.key()
-dev.off()
 ```
 
 ###Show three clustered heatmaps on the same page
@@ -422,3 +475,20 @@ frame()
 dev.off()
 ```
 
+# Figure in manuscript
+pdf("example_manuscript.pdf")
+xsub = tanh(X[sample(40),])
+plot.init(tree=c(2,3), cbar=3, legend=T, text=4)
+hcluster(xsub, clust="row", distance="euclidean", linkage="complete")
+hcluster(xsub, clust="col", distance="euclidean", linkage="complete")
+plot.hmap(xsub)
+plot.tree(side=2)
+plot.tree(side=3)
+z1 = set.color(y1, label="Subtype", type="discrete", color=c("red", "pink", "darkblue", "lightblue", "green"))
+z2 = set.color(y2, label="Stage", type="discrete", color=palette())
+z3 = set.color(y3, label="Immune score", type="continuous", color="black-yellow")
+plot.cbar(z1, z2, z3, pvalue=T, pvalue.method="fisher", border="black", side=3)
+plot.text(rownames(xsub), cex=0.7, side=4)
+plot.cbar.key(hsep=0.15)
+plot.hmap.key()
+dev.off()
