@@ -162,9 +162,9 @@ hcluster = function(X, clust="col", distance="euclidean", linkage="complete", re
       d = as.dist((1-cor(t(X), method=distance))/2)
     }
   }
-  hc = hclust(d, method=linkage)
+  hc = stats::hclust(d, method=linkage)
   if (reorder) {
-    hc = reorder.hclust(hc, d)
+    hc = gclus::reorder.hclust(hc, d)
   }
   tmp = .CLUSTERMAP
   if (clust=="row") {
