@@ -477,6 +477,7 @@ dev.off()
 ```
 
 # Figure in manuscript
+```
 pdf("example_manuscript.pdf")
 xsub = tanh(X[sample(40),])
 draw.init(tree=c(2,3), cbar=3, legend=T, text=4)
@@ -493,3 +494,4 @@ draw.text(rownames(xsub), cex=0.7, side=4)
 draw.cbar.key(hsep=0.15)
 draw.hmap.key()
 dev.off()
+```
