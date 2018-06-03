@@ -22,7 +22,7 @@ Clustermap is designed with the philosophy that technical parameters and quantit
 
 Clustermap offers a variety of solutions and options through a simple, intuitive interface. Colors in heatmaps and annotation color bars are easily changed, requiring no prior knowledge of color handling in R. Heatmaps may be clustered row-wise, column-wise or both, and the user determines which of the cluster dendrograms should be plotted and where to plot them relative to the heatmap. The number of clusters may be found automatically with one of the two provided algorithms Gap or PART, or may be set manually by the user. Diagnostic plots such as silhouette plots and Gap plots are fully integrated in the package and can be produced in an instant to guide the manual choice of the number of clusters. 
 
-This manual will present some general features of the package `clustermap and provide a more in-depth description of the functions implemented in the package. Finally, a number of examples of increasing sophistication and complexity will guide the user through many of the features of the package. These examples are designed to contain only the essential code and can be used as program patterns to be copied and pasted into one's own code.
+This manual will present some general features of the package `clustermap` and provide a more in-depth description of the functions implemented in the package. Finally, a number of examples of increasing sophistication and complexity will guide the user through many of the features of the package. These examples are designed to contain only the essential code and can be used as program patterns to be copied and pasted into one's own code.
 
 ## 1. General notes
 
@@ -402,21 +402,19 @@ draw.hmap.key()
 ```
 
 ###Silhouette plot
-Silhouette plots are used to assess the quality of the subclustering performed on the data. A silhouette plot allows visual inspection of the resulting number of clusters from subclustering, by providing a measure of how close each point in one cluster is to points in neighboring clusters. Using the same clustering as in example 12, in the following example we show the silhouette plot of the column wise clustering. 
+Silhouette plots are used to assess the quality of the subclustering performed on the data. A silhouette plot displays how close each point in a cluster is to points in the closest neighboring clusters. Using the same clustering as in Example 12, we show the silhouette plot of the column-wise clustering. Three clusters seem reasonable in this case. 
 
 ```{r, eval=F}
-pdf("Example13.pdf")
 draw.init(cbar=3, text=4, legend=T)
 hcluster(X, clust="col", distance="euclidean", linkage="complete")
 hcluster(X, clust="row", distance="euclidean", linkage="complete")
 subclust(NA, clust="col", method="part")
 subclust(NA, clust="row", method="part")
 draw.silhouette()
-dev.off()
 ```
 
 ###Gap statistics
-The Gap statistics is a measure of clustering quality. Using the `draw.gap()` function, the user can plot the Gap statistics and use it to get an idea the best number of clusters. The number of clusters (depicted on the x-axis) should be selected to maximize the Gap statistic. 
+The Gap statistics is a measure of clustering quality. Using the `draw.gap()` function, the user can plot the Gap statistics and identify the optimal number of clusters. The optimal number of clusters is highlighted in red. 
 
 ```{r, eval = F}
 pdf("Example14.pdf")
