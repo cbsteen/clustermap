@@ -1,5 +1,5 @@
 # clustermap
-A versatile toolbox in R for clustering and heatmap visualization
+An extensible R package to cluster and generate annotated heatmaps
 
 ### Description
 `clustermap` is a collection of R functions for hierarchical clustering, determination of the number of clusters, and heatmap visualisation.
@@ -13,7 +13,7 @@ install_github("cbsteen/clustermap")
 ```
 
 ### Authors
-Ole Christian Lingjærde, Chloe B. Steen, Miram R. Aure, Vilde D. Haakensen.
+Ole Christian Lingjærde & Chloe B. Steen
 
 ### License
 Artistic-2.0
