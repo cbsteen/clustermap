@@ -19,6 +19,6 @@ Ole Christian Lingjærde & Chloe B. Steen
 Artistic-2.0
 
 ### Reference
-*Clustermap: an extensible R package for clustering and generating annotated heatmaps.* Ole Christian Lingjærde\*, Chloé Beate Steen\*, Miriam Ragle Aure, Vilde Drageset Haakensen (submitted)
+*Clustermap: an extensible R package to cluster and generate annotated heatmaps.* Ole Christian Lingjærde\*, Chloé Beate Steen\*, Miriam Ragle Aure, Vilde Drageset Haakensen (submitted)
 
 \* Corresponding authors, contributed equally to this work.
